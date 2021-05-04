@@ -115,9 +115,6 @@ static const struct {
 };
 
 
-extern int title_update;
-
-
 #ifdef ENABLE_WIN_LOG
 int win_do_log = ENABLE_WIN_LOG;
 
@@ -478,12 +475,11 @@ main_thread(void *param)
     int drawits, frames;
 
     framecountx = 0;
-    title_update = 1;
-    old_time = GetTickCount();
+    old_time = plat_get_ticks();
     drawits = frames = 0;
     while (!is_quit) {
 	/* See if it is time to run a frame of code. */
-	new_time = GetTickCount();
+	new_time = plat_get_ticks();
 	drawits += (new_time - old_time);
 	old_time = new_time;
 	if (drawits > 0 && !dopause) {
@@ -502,7 +498,7 @@ main_thread(void *param)
 			frames = 0;
 		}
 	} else	/* Just so we dont overload the host OS. */
-		Sleep(1);
+		Sleep(drawits < -1 ? 1 : 0);
 
 	/* If needed, handle a screen resize. */
 	if (doresize && !video_fullscreen) {

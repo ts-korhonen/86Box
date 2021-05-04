@@ -27,6 +27,17 @@
 #include <time.h>
 #include <wchar.h>
 
+#if !defined(_MSC_VER) || defined(__clang__)
+#include <stdatomic.h>
+#else
+#define UNICODE
+#include <Windows.h>
+typedef long atomic_int;
+#define ATOMIC_VAR_INIT(VAL) VAL
+#define atomic_fetch_add_explicit(OBJ, VAL, IGNORE) InterlockedExchangeAdd(OBJ, VAL)
+#define atomic_exchange_explicit(OBJ, VAL, IGNORE) InterlockedExchange(OBJ, VAL)
+#endif
+
 #define HAVE_STDARG_H
 #include <86box/86box.h>
 #include <86box/config.h>
@@ -164,7 +175,8 @@ extern int writelnum;
 
 /* emulator % */
 int	fps;
-int framecount;
+volatile atomic_int framecount = ATOMIC_VAR_INIT(0);
+static uint32_t last_onesec = 0;
 
 extern int	CPUID;
 extern int	output;
@@ -177,7 +189,6 @@ FILE	*stdlog = NULL;				/* file to log output to */
 int	scrnsz_x = SCREEN_RES_X;		/* current screen size, X */
 int scrnsz_y = SCREEN_RES_Y;		/* current screen size, Y */
 int	config_changed;				/* config has changed */
-int	title_update;
 int	framecountx = 0;
 int	hard_reset_pending = 0;
 
@@ -939,7 +950,8 @@ pc_close(thread_t *ptr)
 void
 pc_run(void)
 {
-	wchar_t temp[200];
+	/* Increment the framecounter first so it's timing is more stable. */
+	atomic_fetch_add_explicit(&framecount, 1, memory_order_relaxed);
 
 	/* Trigger a hard reset if one is pending. */
 	if (hard_reset_pending) {
@@ -955,29 +967,31 @@ pc_run(void)
 	joystick_process();
 	endblit();
 
-	/* Done with this frame, update statistics. */
-	framecount++;
+	/* Done with this frame, update statistics. */	
 	if (++framecountx >= 100) {
 		framecountx = 0;
 		frames = 0;
 	}
-
-	if (title_update) {
-		swprintf(temp, sizeof_w(temp), mouse_msg[!!mouse_capture], fps);
-		ui_window_title(temp);
-		title_update = 0;
-	}
 }
-
 
 /* Handler for the 1-second timer to refresh the window title. */
 void
 pc_onesec(void)
 {
-	fps = framecount;
-	framecount = 0;
+	/* Get framecount and reset it atomically */
+	fps = atomic_exchange_explicit(&framecount, 0, memory_order_relaxed);
 
-	title_update = 1;
+	uint32_t cur_onesec = plat_get_ticks();
+
+	int period = (int)(cur_onesec - last_onesec) - 1000;
+
+	fps += (period / 10);
+
+	last_onesec = cur_onesec;
+
+	wchar_t temp[200];
+	swprintf(temp, sizeof_w(temp), mouse_msg[!!mouse_capture], fps);
+	ui_window_title(temp);
 }
 
 
