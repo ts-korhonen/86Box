@@ -299,6 +299,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionTake_screenshot->setShortcutVisibleInContextMenu(true);
 #endif
     video_setblit(qt_blit);
+    if (start_in_fullscreen) connect(ui->stackedWidget, &RendererStack::blitToRenderer, this, [this] () { if (start_in_fullscreen) { QTimer::singleShot(100, ui->actionFullscreen, &QAction::trigger); start_in_fullscreen = 0; } } );
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
@@ -977,6 +978,19 @@ void MainWindow::on_actionFullscreen_triggered() {
             emit resizeContents(scrnsz_x, scrnsz_y);
         }
     } else {
+        if (video_fullscreen_first)
+        {
+            QMessageBox questionbox(QMessageBox::Icon::Information, tr("Entering fullscreen mode"), tr("Press CTRL+ALT+PAGE DOWN to return to windowed mode."), QMessageBox::Ok, this);
+            QCheckBox *chkbox = new QCheckBox(tr("Don't show this message again"));
+            questionbox.setCheckBox(chkbox);
+            chkbox->setChecked(!video_fullscreen_first);
+            bool confirm_exit_temp = false;
+            QObject::connect(chkbox, &QCheckBox::stateChanged, [](int state) {
+                video_fullscreen_first = (state == Qt::CheckState::Unchecked);
+            });
+            questionbox.exec();
+            config_save();
+        }
         setFixedSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
         ui->menubar->hide();
         ui->statusbar->hide();
