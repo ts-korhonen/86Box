@@ -310,6 +310,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionTake_screenshot->setShortcutVisibleInContextMenu(true);
 #endif
     video_setblit(qt_blit);
+
     if (start_in_fullscreen) {
         connect(ui->stackedWidget, &RendererStack::blitToRenderer, this, [this] () {
             if (start_in_fullscreen) {
