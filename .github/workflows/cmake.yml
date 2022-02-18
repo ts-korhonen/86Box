@@ -25,7 +25,7 @@ jobs:
   msys2:
     name: MSYS2 ${{ matrix.build.name }} build (${{ matrix.environment.msystem }})
 
-    runs-on: windows-latest
+    runs-on: windows-2019
 
     defaults:
       run:
@@ -485,6 +485,7 @@ jobs:
           -D CMAKE_INSTALL_PREFIX=./build/artifacts
           -D DEV_BRANCH=${{ matrix.build.dev-build }}
           -D NEW_DYNAREC=${{ matrix.build.new-dynarec }}
+          -D VNC=OFF
           -D QT=ON
           -D CMAKE_BUILD_TYPE=${{ matrix.build.type }}
           -D CMAKE_C_COMPILER=gcc-11 -D CMAKE_CXX_COMPILER=g++-11
