@@ -494,7 +494,7 @@ jobs:
         run: cmake --install build --prefix ./build/artifacts ${{ matrix.build.strip }}
       - uses: actions/upload-artifact@v2
         with:
-          name: '86Box${{ matrix.build.slug }}-UbuntuFocal-x86_64-gha${{ github.run_number }}'
+          name: '86Box${{ matrix.build.slug }}-Linux-x86_64-gha${{ github.run_number }}'
           path: build/artifacts/**
 
   macos10:
