@@ -7,7 +7,6 @@
 	"dependencies": [
 		"freetype",
 		"libpng",
-		"openal-soft",
 		"sdl2",
 		"rtmidi"
 	],
@@ -17,6 +16,12 @@
 			"dependencies": [
 				"qt5-base",
 				"qt5-translations"
+			]
+		},
+		"openal": {
+			"description": "OpenAL Sound Support",
+			"dependencies": [
+				"openal-soft"
 			]
 		},
 		"munt": {

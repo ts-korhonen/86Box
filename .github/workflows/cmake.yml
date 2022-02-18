@@ -102,6 +102,222 @@ jobs:
         name: '86Box${{ matrix.build.slug }}-Windows-${{ matrix.environment.msystem }}-gha${{ github.run_number }}'
         path: build/artifacts/**
 
+  vs2015-arm:
+    name: VS2015 ${{ matrix.build.name }} ARM build (${{ matrix.toolset }})
+
+    runs-on: windows-2016
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build:
+        - name: Regular NDR
+          slug: -NDR
+          type: Release
+          dev-build: off
+          new-dynarec: on
+          strip: --strip
+        - name: Debug NDR
+          slug: -NDR-Debug
+          type: Debug
+          dev-build: off
+          new-dynarec: on
+        - name: Dev NDR
+          slug: -NDR-Dev
+          type: Debug
+          dev-build: on
+          new-dynarec: on
+        toolset: ['v140', 'v141', 'v142']
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v2
+      with:
+        path: build/vcpkg_installed
+        key: vcpkg-${{ hashFiles('vcpkg.json') }}-ARM
+    - uses: microsoft/setup-msbuild@v1.1
+    - name: Configure CMake
+      run: >-
+        cmake -S . -B build
+        -G "Visual Studio 14 2015" -A ARM -T ${{ matrix.toolset }}
+        -D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
+        -D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/llvm-win32-arm.cmake
+        -D VCPKG_TARGET_TRIPLET=arm-windows-static
+        -D CMAKE_INSTALL_PREFIX=${{ github.workspace }}/build/artifacts
+        -D DEV_BRANCH=${{ matrix.build.dev-build }}
+        -D NEW_DYNAREC=${{ matrix.build.new-dynarec }}
+        -D OPENAL=OFF
+        -D VNC=OFF
+        -D CPPTHREADS=OFF
+    - name: Build
+      run: cmake --build build --config ${{ matrix.build.type }} --target install
+    - uses: actions/upload-artifact@v2
+      with:
+        name: '86Box-VS2015-${{ matrix.build.name }}-ARM-${{ matrix.toolset }}-${{ github.sha }}'
+        path: build/artifacts/bin/**
+
+  vs2017-arm:
+    name: VS2017 ${{ matrix.build.name }} ARM build (${{ matrix.toolset }})
+
+    runs-on: windows-2016
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build:
+        - name: Regular NDR
+          slug: -NDR
+          type: Release
+          dev-build: off
+          new-dynarec: on
+          strip: --strip
+        - name: Debug NDR
+          slug: -NDR-Debug
+          type: Debug
+          dev-build: off
+          new-dynarec: on
+        - name: Dev NDR
+          slug: -NDR-Dev
+          type: Debug
+          dev-build: on
+          new-dynarec: on
+        toolset: ['v140', 'v141', 'v142']
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v2
+      with:
+        path: build/vcpkg_installed
+        key: vcpkg-${{ hashFiles('vcpkg.json') }}-ARM
+    - uses: microsoft/setup-msbuild@v1.1
+    - name: Configure CMake
+      run: >-
+        cmake -S . -B build
+        -G "Visual Studio 15 2017" -A ARM -T ${{ matrix.toolset }}
+        -D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
+        -D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/llvm-win32-arm.cmake
+        -D VCPKG_TARGET_TRIPLET=arm-windows-static
+        -D CMAKE_INSTALL_PREFIX=${{ github.workspace }}/build/artifacts
+        -D DEV_BRANCH=${{ matrix.build.dev-build }}
+        -D NEW_DYNAREC=${{ matrix.build.new-dynarec }}
+        -D OPENAL=OFF
+        -D VNC=OFF
+        -D CPPTHREADS=OFF
+    - name: Build
+      run: cmake --build build --config ${{ matrix.build.type }} --target install
+    - uses: actions/upload-artifact@v2
+      with:
+        name: '86Box-VS2017-${{ matrix.build.name }}-ARM-${{ matrix.toolset }}-${{ github.sha }}'
+        path: build/artifacts/bin/**
+
+  vs2019-arm:
+    name: VS2019 ${{ matrix.build.name }} ARM build (${{ matrix.toolset }})
+
+    runs-on: windows-2019
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build:
+        - name: Regular NDR
+          slug: -NDR
+          type: Release
+          dev-build: off
+          new-dynarec: on
+          strip: --strip
+        - name: Debug NDR
+          slug: -NDR-Debug
+          type: Debug
+          dev-build: off
+          new-dynarec: on
+        - name: Dev NDR
+          slug: -NDR-Dev
+          type: Debug
+          dev-build: on
+          new-dynarec: on
+        toolset: ['v140', 'v141', 'v142']
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v2
+      with:
+        path: build/vcpkg_installed
+        key: vcpkg-${{ hashFiles('vcpkg.json') }}-ARM
+    - uses: microsoft/setup-msbuild@v1.1
+    - name: Configure CMake
+      run: >-
+        cmake -S . -B build
+        -G "Visual Studio 16 2019" -A ARM -T ${{ matrix.toolset }}
+        -D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
+        -D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/llvm-win32-arm.cmake
+        -D VCPKG_TARGET_TRIPLET=arm-windows-static
+        -D CMAKE_INSTALL_PREFIX=${{ github.workspace }}/build/artifacts
+        -D DEV_BRANCH=${{ matrix.build.dev-build }}
+        -D NEW_DYNAREC=${{ matrix.build.new-dynarec }}
+        -D OPENAL=OFF
+        -D VNC=OFF
+        -D CPPTHREADS=OFF
+    - name: Build
+      run: cmake --build build --config ${{ matrix.build.type }} --target install
+    - uses: actions/upload-artifact@v2
+      with:
+        name: '86Box-VS2019-${{ matrix.build.name }}-ARM-${{ matrix.toolset }}-${{ github.sha }}'
+        path: build/artifacts/bin/**
+
+  vs2022-arm:
+    name: VS2022 ${{ matrix.build.name }} ARM build (${{ matrix.toolset }})
+
+    runs-on: windows-2022
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build:
+        - name: Regular NDR
+          slug: -NDR
+          type: Release
+          dev-build: off
+          new-dynarec: on
+          strip: --strip
+        - name: Debug NDR
+          slug: -NDR-Debug
+          type: Debug
+          dev-build: off
+          new-dynarec: on
+        - name: Dev NDR
+          slug: -NDR-Dev
+          type: Debug
+          dev-build: on
+          new-dynarec: on
+        toolset: ['v140', 'v141', 'v142', 'v143']
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v2
+      with:
+        path: build/vcpkg_installed
+        key: vcpkg-${{ hashFiles('vcpkg.json') }}-ARM
+    - uses: microsoft/setup-msbuild@v1.1
+    - name: Configure CMake
+      run: >-
+        cmake -S . -B build
+        -G "Visual Studio 17 2022" -A ARM -T ${{ matrix.toolset }}
+        -D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
+        -D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/llvm-win32-arm.cmake
+        -D VCPKG_TARGET_TRIPLET=arm-windows-static
+        -D CMAKE_INSTALL_PREFIX=${{ github.workspace }}/build/artifacts
+        -D DEV_BRANCH=${{ matrix.build.dev-build }}
+        -D NEW_DYNAREC=${{ matrix.build.new-dynarec }}
+        -D OPENAL=OFF
+        -D VNC=OFF
+        -D CPPTHREADS=OFF
+    - name: Build
+      run: cmake --build build --config ${{ matrix.build.type }} --target install
+    - uses: actions/upload-artifact@v2
+      with:
+        name: '86Box-VS2022-${{ matrix.build.name }}-ARM-${{ matrix.toolset }}-${{ github.sha }}'
+        path: build/artifacts/bin/**
+
   llvm-windows:
     name: "Windows vcpkg/LLVM (${{ matrix.build.name }} ${{ matrix.target.name }})"
 
@@ -155,11 +371,19 @@ jobs:
           triplet: x64-windows-static
           toolchain: cmake/llvm-win32-x86_64.cmake
           vcvars: x64
+#        - name: ARM
+#          triplet: arm-windows-static
+#          toolchain: cmake/llvm-win32-arm.cmake
+#          vcvars: x64_arm
         - name: ARM64
           triplet: arm64-windows-static
           toolchain: cmake/llvm-win32-aarch64.cmake
           vcvars: x64_arm64
         exclude:
+        - build: 
+            new-dynarec: off
+          target:
+            name: ARM
         - build: 
             new-dynarec: off
           target:
@@ -194,6 +418,8 @@ jobs:
         -D CMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
         -D VCPKG_CHAINLOAD_TOOLCHAIN_FILE=${{ github.workspace }}/${{ matrix.target.toolchain }}
         -D VCPKG_TARGET_TRIPLET=${{ matrix.target.triplet }}
+        -D OPENAL=ON
+        -D CPPTHREADS=OFF
       shell: cmd
     - name: Build
       run: |
