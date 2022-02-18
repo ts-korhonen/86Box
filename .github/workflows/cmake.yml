@@ -35,10 +35,10 @@ jobs:
       fail-fast: true
       matrix:
         build:
-        - name: Regular ODR
-          slug: -ODR
-          preset: regular
-          target: install/strip
+#        - name: Regular ODR
+#          slug: -ODR
+#          preset: regular
+#          target: install/strip
         - name: Debug ODR
           slug: -ODR-Debug
           preset: debug
@@ -47,10 +47,10 @@ jobs:
           slug: -ODR-Dev
           preset: experimental
           target: install
-        - name: Regular NDR
-          slug: -NDR
-          preset: regularndr
-          target: install/strip
+#        - name: Regular NDR
+#          slug: -NDR
+#          preset: regularndr
+#          target: install/strip
         - name: Debug NDR
           slug: -NDR-Debug
           preset: debugndr
@@ -111,12 +111,12 @@ jobs:
       fail-fast: false
       matrix:
         build:
-        - name: Regular NDR
-          slug: -NDR
-          type: Release
-          dev-build: off
-          new-dynarec: on
-          strip: --strip
+#        - name: Regular NDR
+#          slug: -NDR
+#          type: Release
+#          dev-build: off
+#          new-dynarec: on
+#          strip: --strip
         - name: Debug NDR
           slug: -NDR-Debug
           type: Debug
@@ -165,12 +165,12 @@ jobs:
       fail-fast: false
       matrix:
         build:
-        - name: Regular NDR
-          slug: -NDR
-          type: Release
-          dev-build: off
-          new-dynarec: on
-          strip: --strip
+#        - name: Regular NDR
+#          slug: -NDR
+#          type: Release
+#          dev-build: off
+#          new-dynarec: on
+#          strip: --strip
         - name: Debug NDR
           slug: -NDR-Debug
           type: Debug
@@ -219,12 +219,12 @@ jobs:
       fail-fast: false
       matrix:
         build:
-        - name: Regular NDR
-          slug: -NDR
-          type: Release
-          dev-build: off
-          new-dynarec: on
-          strip: --strip
+#        - name: Regular NDR
+#          slug: -NDR
+#          type: Release
+#          dev-build: off
+#          new-dynarec: on
+#          strip: --strip
         - name: Debug NDR
           slug: -NDR-Debug
           type: Debug
@@ -273,12 +273,12 @@ jobs:
       fail-fast: false
       matrix:
         build:
-        - name: Regular NDR
-          slug: -NDR
-          type: Release
-          dev-build: off
-          new-dynarec: on
-          strip: --strip
+#        - name: Regular NDR
+#          slug: -NDR
+#          type: Release
+#          dev-build: off
+#          new-dynarec: on
+#          strip: --strip
         - name: Debug NDR
           slug: -NDR-Debug
           type: Debug
@@ -330,12 +330,12 @@ jobs:
       fail-fast: true
       matrix:
         build:
-        - name: Regular ODR
-          slug: -ODR
-          type: Release
-          dev-build: off
-          new-dynarec: off
-          strip: --strip
+#        - name: Regular ODR
+#          slug: -ODR
+#          type: Release
+#          dev-build: off
+#          new-dynarec: off
+#          strip: --strip
         - name: Debug ODR
           slug: -ODR-Debug
           type: Debug
@@ -346,12 +346,12 @@ jobs:
           type: Debug
           dev-build: on
           new-dynarec: off
-        - name: Regular NDR
-          slug: -NDR
-          type: Release
-          strip: --strip
-          dev-build: off
-          new-dynarec: on
+#        - name: Regular NDR
+#          slug: -NDR
+#          type: Release
+#          strip: --strip
+#          dev-build: off
+#          new-dynarec: on
         - name: Debug NDR
           slug: -NDR-Debug
           type: Debug
@@ -380,10 +380,10 @@ jobs:
           toolchain: cmake/llvm-win32-aarch64.cmake
           vcvars: x64_arm64
         exclude:
-        - build: 
-            new-dynarec: off
-          target:
-            name: ARM
+#        - build: 
+#            new-dynarec: off
+#          target:
+#            name: ARM
         - build: 
             new-dynarec: off
           target:
@@ -436,18 +436,18 @@ jobs:
   linux:
     name: "Linux GCC 11 (${{ matrix.build.name }} x86_64)"
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     strategy:
       fail-fast: true
       matrix:
         build:
-        - name: Regular ODR
-          slug: -ODR
-          type: Release
-          dev-build: off
-          new-dynarec: off
-          strip: --strip
+#        - name: Regular ODR
+#          slug: -ODR
+#          type: Release
+#          dev-build: off
+#          new-dynarec: off
+#          strip: --strip
         - name: Debug ODR
           slug: -ODR-Debug
           type: Debug
@@ -458,12 +458,12 @@ jobs:
           type: Debug
           dev-build: on
           new-dynarec: off
-        - name: Regular NDR
-          slug: -NDR
-          type: Release
-          strip: --strip
-          dev-build: off
-          new-dynarec: on
+#        - name: Regular NDR
+#          slug: -NDR
+#          type: Release
+#          strip: --strip
+#          dev-build: off
+#          new-dynarec: on
         - name: Debug NDR
           slug: -NDR-Debug
           type: Debug
@@ -507,12 +507,12 @@ jobs:
       fail-fast: true
       matrix:
         build:
-        - name: Regular ODR
-          slug: -ODR
-          type: Release
-          dev-build: off
-          new-dynarec: off
-          strip: --strip
+#        - name: Regular ODR
+#          slug: -ODR
+#          type: Release
+#          dev-build: off
+#          new-dynarec: off
+#          strip: --strip
         - name: Debug ODR
           slug: -ODR-Debug
           type: Debug
@@ -523,12 +523,12 @@ jobs:
           type: Debug
           dev-build: on
           new-dynarec: off
-        - name: Regular NDR
-          slug: -NDR
-          type: Release
-          strip: --strip
-          dev-build: off
-          new-dynarec: on
+#        - name: Regular NDR
+#          slug: -NDR
+#          type: Release
+#          strip: --strip
+#          dev-build: off
+#          new-dynarec: on
         - name: Debug NDR
           slug: -NDR-Debug
           type: Debug
@@ -573,12 +573,12 @@ jobs:
       fail-fast: true
       matrix:
         build:
-        - name: Regular ODR
-          slug: -ODR
-          type: Release
-          dev-build: off
-          new-dynarec: off
-          strip: --strip
+#        - name: Regular ODR
+#          slug: -ODR
+#          type: Release
+#          dev-build: off
+#          new-dynarec: off
+#          strip: --strip
         - name: Debug ODR
           slug: -ODR-Debug
           type: Debug
@@ -589,12 +589,12 @@ jobs:
           type: Debug
           dev-build: on
           new-dynarec: off
-        - name: Regular NDR
-          slug: -NDR
-          type: Release
-          strip: --strip
-          dev-build: off
-          new-dynarec: on
+#        - name: Regular NDR
+#          slug: -NDR
+#          type: Release
+#          strip: --strip
+#          dev-build: off
+#          new-dynarec: on
         - name: Debug NDR
           slug: -NDR-Debug
           type: Debug
