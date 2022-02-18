@@ -497,6 +497,72 @@ jobs:
           name: '86Box${{ matrix.build.slug }}-UbuntuFocal-x86_64-gha${{ github.run_number }}'
           path: build/artifacts/**
 
+  macos10:
+    name: "macOS 10.15 (${{ matrix.build.name }} x86_64)"
+
+    runs-on: macos-10.15
+
+    strategy:
+      fail-fast: true
+      matrix:
+        build:
+        - name: Regular ODR
+          slug: -ODR
+          type: Release
+          dev-build: off
+          new-dynarec: off
+          strip: --strip
+        - name: Debug ODR
+          slug: -ODR-Debug
+          type: Debug
+          dev-build: off
+          new-dynarec: off
+        - name: Dev ODR
+          slug: -ODR-Dev
+          type: Debug
+          dev-build: on
+          new-dynarec: off
+        - name: Regular NDR
+          slug: -NDR
+          type: Release
+          strip: --strip
+          dev-build: off
+          new-dynarec: on
+        - name: Debug NDR
+          slug: -NDR-Debug
+          type: Debug
+          dev-build: off
+          new-dynarec: on
+        - name: Dev NDR
+          slug: -NDR-Dev
+          type: Debug
+          dev-build: on
+          new-dynarec: on
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: brew install freetype sdl2 libpng openal-soft rtmidi qt@5
+      - name: Configure CMake
+        run: >-
+          cmake -S . -B build
+          --toolchain cmake/flags-gcc-x86_64.cmake
+          -D DEV_BRANCH=${{ matrix.build.dev-build }}
+          -D NEW_DYNAREC=${{ matrix.build.new-dynarec }}
+          -D VNC=OFF
+          -D CMAKE_BUILD_TYPE=${{ matrix.build.type }}
+          -D QT=ON
+          -D Qt5_DIR=/usr/local/Cellar/qt@5/5.15.2_1/lib/cmake/Qt5
+          -D Qt5LinguistTools_DIR=/usr/local/Cellar/qt@5/5.15.2_1/lib/cmake/Qt5LinguistTools/
+      - name: Build
+        run: cmake --build build
+      - name: Generate package
+        run: cmake --install build --prefix ./build/artifacts ${{ matrix.build.strip }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: '86Box${{ matrix.build.slug }}-macOS-x86_64-gha${{ github.run_number }}'
+          path: build/artifacts/**
+
   macos11:
     name: "macOS 11 (${{ matrix.build.name }} x86_64)"
 
