@@ -81,7 +81,7 @@ def presetSlugs = [
 def presetFlags = [
 	'Regular': '-t --preset=regular -D CMAKE_BUILD_TYPE=Release',
 	'Debug': '--preset=debug -D CMAKE_BUILD_TYPE=Debug',
-	'Dev': '--preset=experimental -D CMAKE_BUILD_TYPE=Debug -D VNC=OFF'
+	'Dev': '-t --preset=experimental -D CMAKE_BUILD_TYPE=Debug -D VNC=OFF'
 ]
 
 def anyFailure = false
