@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>320</height>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -99,15 +99,43 @@
      <property name="title">
       <string>Shaders</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout" columnstretch="3,1">
-      <item row="2" column="1">
+     <layout class="QGridLayout" name="gridLayout" columnstretch="3,0">
+      <item row="1" column="1">
+       <widget class="QPushButton" name="deletePreset">
+        <property name="text">
+         <string>Preset</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QPushButton" name="editParameters">
+        <property name="text">
+         <string>Parameters...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
        <widget class="QPushButton" name="removeShader">
         <property name="text">
          <string>Remove</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="3" column="1" alignment="Qt::AlignTop">
+       <widget class="QPushButton" name="addShader">
+        <property name="text">
+         <string>Browse...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -120,20 +148,23 @@
         </property>
        </spacer>
       </item>
-      <item row="1" column="0" rowspan="3">
+      <item row="1" column="0">
+       <widget class="QComboBox" name="presetCombo">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <property name="placeholderText">
+         <string>No preset</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" rowspan="4">
        <widget class="QTextEdit" name="shader">
         <property name="readOnly">
          <bool>true</bool>
         </property>
         <property name="placeholderText">
          <string>No shader selected</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" alignment="Qt::AlignTop">
-       <widget class="QPushButton" name="addShader">
-        <property name="text">
-         <string>Browse...</string>
         </property>
        </widget>
       </item>
@@ -267,8 +298,8 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>333</x>
-     <y>201</y>
+     <x>380</x>
+     <y>242</y>
     </hint>
     <hint type="destinationlabel">
      <x>235</x>

@@ -16,8 +16,12 @@
 
 #include <QByteArray>
 #include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QRegularExpression>
 #include <QStringBuilder>
+#include <QStringList>
 
 #include <stdexcept>
 
@@ -131,33 +135,75 @@ OpenGLOptions::setFilter(FilterType value)
 void
 OpenGLOptions::addShader(const QString &path)
 {
-    QFile shader_file(path);
+    auto bytes = readTextFile(path);
 
-    if (!shader_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        throw std::runtime_error(
-            QString(tr("Error opening \"%1\": %2"))
-                .arg(path)
-                .arg(shader_file.errorString())
-                .toStdString());
+    auto json = QJsonDocument::fromJson(bytes);
+
+    if (!json.isNull()) {
+        for (auto &&item : json["shaders"].toArray()) {
+            auto shader = item.toObject();
+
+            auto sPath = shader["path"].toString();
+
+            if (sPath.isEmpty())
+                throw std::runtime_error("");
+
+            QList<QPair<QString, float>> parameters;
+
+            auto params = shader["parameters"].toObject();
+
+            for (auto &&key : params.keys()) {
+
+                auto param = params[key];
+
+                parameters << qMakePair(key, param.toVariant().toFloat());
+            }
+
+            addShader(QString(readTextFile(sPath)), sPath, parameters);
+        }
+    } else {
+        addShader(QString(bytes), path);
     }
+}
 
-    auto shader_text = QString(shader_file.readAll());
+void
+OpenGLOptions::addShader(QString source, const QString &path, QList<QPair<QString, float>> parameters)
+{
+    /* Parser for parameter lines with format:
+     * #pragma parameter IDENTIFIER "DESCRIPTION" INITIAL MINIMUM MAXIMUM [STEP]
+     */
+    QRegularExpression parameter(
+        "^\\s*#pragma\\s+parameter\\s+(\\w+)\\s+\"(.+)\"\\s+(-?[\\.\\d]+)\\s+(-?[\\.\\d]+)\\s+(-?[\\.\\d]+)(\\s+-?[\\.\\d]+)?.*?\\n",
+        QRegularExpression::MultilineOption);
 
-    shader_file.close();
+    // auto parameters = parameter.globalMatch(source);
+
+    // while (parameters.hasNext()) {
+    //     auto param = parameters.next();
+
+    //    qDebug() << "Name: " << param.captured(1);
+    //    qDebug() << "Desc: " << param.captured(2);
+    //    qDebug() << "Init: " << param.captured(3).toFloat();
+    //    qDebug() << "Min : " << param.captured(4).toFloat();
+    //    qDebug() << "Max : " << param.captured(5).toFloat();
+    //    if (!param.captured(6).isEmpty())
+    //        qDebug() << "Step: " << param.captured(6).toFloat();
+    //}
 
     /* Remove parameter lines */
-    shader_text.remove(QRegularExpression("^\\s*#pragma parameter.*?\\n", QRegularExpression::MultilineOption));
+    // shader_text.remove(QRegularExpression("^\\s*#pragma parameter.*?\\n", QRegularExpression::MultilineOption));
+    source.remove(parameter);
 
     QRegularExpression version("^\\s*(#version\\s+\\w+)", QRegularExpression::MultilineOption);
 
-    auto match = version.match(shader_text);
+    auto match = version.match(source);
 
     QString version_line(m_glslVersion);
 
     if (match.hasMatch()) {
         /* Extract existing version and remove it. */
         version_line = match.captured(1);
-        shader_text.remove(version);
+        source.remove(version);
     }
 
     auto shader = new QOpenGLShaderProgram(this);
@@ -170,18 +216,26 @@ OpenGLOptions::addShader(const QString &path)
                 .toStdString());
     };
 
-    static const char *extension = "\n#extension GL_ARB_shading_language_420pack : enable\n";
+    QStringList header {
+        version_line,
+        "#extension GL_ARB_shading_language_420pack : enable",
+        "#define PARAMETER_UNIFORM",
+        "#define %1",
+        "#line 1",
+        ""
+    };
+    QString prefix = header.join('\n');
 
-    if (!shader->addShaderFromSourceCode(QOpenGLShader::Vertex, version_line % extension % "\n#define VERTEX\n#line 1\n" % shader_text))
+    if (!shader->addShaderFromSourceCode(QOpenGLShader::Vertex, prefix.arg("VERTEX") % source))
         throw_shader_error(tr("Error compiling vertex shader in file \"%1\""));
 
-    if (!shader->addShaderFromSourceCode(QOpenGLShader::Fragment, version_line % extension % "\n#define FRAGMENT\n#line 1\n" % shader_text))
+    if (!shader->addShaderFromSourceCode(QOpenGLShader::Fragment, prefix.arg("FRAGMENT") % source))
         throw_shader_error(tr("Error compiling fragment shader in file \"%1\""));
 
     if (!shader->link())
         throw_shader_error(tr("Error linking shader program in file \"%1\""));
 
-    m_shaders << OpenGLShaderPass(shader, path);
+    m_shaders << OpenGLShaderPass(shader, path, parameters);
 }
 
 void
@@ -191,5 +245,25 @@ OpenGLOptions::addDefaultShader()
     shader->addShaderFromSourceCode(QOpenGLShader::Vertex, m_glslVersion % "\n" % vertex_shader);
     shader->addShaderFromSourceCode(QOpenGLShader::Fragment, m_glslVersion % "\n" % fragment_shader);
     shader->link();
-    m_shaders << OpenGLShaderPass(shader, QString());
+    m_shaders << OpenGLShaderPass(shader, QString(), QList<QPair<QString, float>>());
+}
+
+QByteArray
+OpenGLOptions::readTextFile(const QString &path)
+{
+    QFile file(path);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        throw std::runtime_error(
+            QString(tr("Error opening \"%1\": %2"))
+                .arg(path)
+                .arg(file.errorString())
+                .toStdString());
+    }
+
+    auto bytes = file.readAll();
+
+    file.close();
+
+    return bytes;
 }

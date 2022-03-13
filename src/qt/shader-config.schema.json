@@ -1,0 +1,34 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://raw.githubusercontent.com/86Box/86Box/master/src/qt/shader-config.schema.json",
+    "title": "86Box Shader configuration",
+    "description": "Defines shaders and their paramaters",
+    "type": "object",
+    "properties": {
+        "shaders": {
+            "description": "Shaders in the order they are to applied",
+            "type": "array",
+            "items": {
+                "description": "Shader",
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string"
+                    },
+                    "parameters": {
+                        "type": "object",
+                        "patternProperties": {
+                            "^[a-zA-Z0-9_]+$": {
+                                "type": "number"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "required": ["path"]
+            },
+            "minItems": 1
+        }
+    },
+    "required": ["shaders"]
+}

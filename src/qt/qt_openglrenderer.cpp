@@ -369,6 +369,10 @@ OpenGLRenderer::applyShader(const OpenGLShaderPass &shader)
 
     if (shader.frame_count() != -1)
         glUniform1i(shader.frame_count(), frameCounter);
+
+    for (auto &&pair : shader.parameters()) {
+        glUniform1f(pair.first, pair.second);
+    }
 }
 
 void

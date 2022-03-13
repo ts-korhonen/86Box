@@ -47,6 +47,7 @@ private:
 
 private slots:
     void on_addShader_clicked();
+    void on_editParameters_clicked();
 };
 
 #endif // QT_OPENGLOPTIONSDIALOG_H

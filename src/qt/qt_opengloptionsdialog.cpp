@@ -17,6 +17,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QStringBuilder>
+#include <QMenu>
 
 #include <stdexcept>
 
@@ -30,6 +31,12 @@ OpenGLOptionsDialog::OpenGLOptionsDialog(QWidget *parent, const OpenGLOptions &o
     , createOptions(optionsFactory)
 {
     ui->setupUi(this);
+
+    auto menu = new QMenu(this);
+    menu->addAction("Import...");
+    menu->addAction("Export...");
+    menu->addAction("Delete");
+    ui->deletePreset->setMenu(menu);
 
     if (options.renderBehavior() == OpenGLOptions::SyncWithVideo)
         ui->syncWithVideo->setChecked(true);
@@ -112,4 +119,12 @@ OpenGLOptionsDialog::on_addShader_clicked()
         return;
 
     ui->shader->setPlainText(shader);
+}
+
+void
+OpenGLOptionsDialog::on_editParameters_clicked()
+{
+    auto options = createOptions();
+
+    //options->shaders().first().parameters()
 }
