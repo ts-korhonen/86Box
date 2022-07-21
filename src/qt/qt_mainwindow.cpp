@@ -2001,7 +2001,7 @@ void MainWindow::changeEvent(QEvent* event)
 #endif
 
     if (event->type() == QEvent::WindowStateChange && isFullScreen()) {
-        ui->stackedWidget->resize(width(), height());
+        ui->stackedWidget->onResize(width(), height());
     }
 
     QWidget::changeEvent(event);
