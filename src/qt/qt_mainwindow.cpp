@@ -1468,7 +1468,6 @@ void MainWindow::on_actionFullscreen_triggered() {
         ui->toolBar->hide();
         showFullScreen();
     }
-    ui->stackedWidget->onResize(width(), height());
 }
 
 void MainWindow::getTitle_(wchar_t *title)
@@ -2000,6 +1999,11 @@ void MainWindow::changeEvent(QEvent* event)
         QApplication::setFont(QFont(font_name, font_size.toInt()));
     }
 #endif
+
+    if (event->type() == QEvent::WindowStateChange && isFullScreen()) {
+        ui->stackedWidget->resize(width(), height());
+    }
+
     QWidget::changeEvent(event);
 }
 
